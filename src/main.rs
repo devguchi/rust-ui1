@@ -1,29 +1,21 @@
-use iced::{executor, Application, Clipboard, Command, Element, Settings, Text};
+extern crate gtk;
+extern crate gio;
 
-pub fn main() -> iced::Result {
-    Hello::run(Settings::default())
-}
+use gtk::{ WidgetExt, WindowExt };
+use gio::{ ApplicationExt };
 
-struct Hello;
-
-impl Application for Hello {
-    type Executor = executor::Default;
-    type Message = ();
-    type Flags = ();
-
-    fn new(_flags: ()) -> (Hello, Command<Self::Message>) {
-        (Hello, Command::none())
-    }
-
-    fn title(&self) -> String {
-        String::from("A cool application")
-    }
-
-    fn update(&mut self, _message: Self::Message, _clipboard: &mut Clipboard) -> Command<Self::Message> {
-        Command::none()
-    }
-
-    fn view(&mut self) -> Element<Self::Message> {
-        Text::new("Hello, world!").into()
-    }
+fn main() {
+    match gtk::Application::new("com.hoge", gio::APPLICATION_HANDLES_OPEN) {
+        Ok(app) => {
+            app.connect_activate(|app| {
+                let win = gtk::ApplicationWindow::new(&app);
+                win.set_title("HOGE");
+                win.show_all();
+            });
+            app.run(&[""]);
+        },
+        Err(_) => {
+            println!("Application start up error");
+        }
+    };
 }
